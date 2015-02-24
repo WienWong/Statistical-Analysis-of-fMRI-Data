@@ -37,6 +37,8 @@ X = fmri.design(hrf)
 # By default the design matrix will include polynomial drift terms up to quadratic order. Thus the resulting design matrix will
 # have dimensions 96x4. Use the command image(X) to further explore the structure of the design matrix.
 
+# image(X)
+
 # If we had multiple stimuli we would need to create separate predicted BOLD responses for each stimuli based on their onsets 
 # and durations (e.g., hrf1, hrf2, etc.), and create a design matrix using the commands cbind() and fmri.design() together (e.g.
 # fmri.design(cbind(hrf1, hrf2, ...))).
@@ -46,6 +48,7 @@ X = fmri.design(hrf)
 M = read.table("fM00223/motion.txt")
 
 X2 = fmri.design(cbind(hrf, M))
+# image(X2)
 
 # The first command reads in the motion parameters and the second creates a design matrix where the first column is the 
 # predicted BOLD response (hrf), columns 2-7 are the motion parameters (M), and 8-10 are the polynomial drift terms. Hence, 
@@ -78,6 +81,7 @@ spm = fmri.lm(data, X2)
 #     Local smoothness characterized by large bandwidth  4  check residuals for structure,Local smoothness characterized by 
 #     large bandwidth  4  check residuals for structure,Local smoothness characterized by large bandwidth  4  check residuals 
 #     for structure
+## Above were just running information
 
 ######## U don't need to run below chunk of code here ######### 
 
@@ -114,6 +118,6 @@ image(T[, , 40], main = "Slice 40")
 image(T[, , 50], main = "Slice 50")
 
 par(mfrow = (c(1, 2)))
-barplot(X, main="design matrix")
-barplot(X2, main="design matrix includes\n motion parameters")
+image(X, main="design matrix")
+image(X2, main="design matrix includes\n motion parameters")
 
