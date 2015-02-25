@@ -1,5 +1,5 @@
 
-# fMRI Tutorial 2
+# fMRI Tutorial 2 -- Simple GLM Analysis
 
 getwd()
 setwd("D:/Coursera_R/fRMI/MoAEpilot_preproc")
@@ -29,7 +29,7 @@ hrf = fmri.stimulus(96, onsets = seq(7, 96, by=12), durations = 6, rt = 7)
 # the stimulus is convolved with a canonical HRF shape.
 
 # To view the predicted BOLD response type:
-plot(hrf, type = 'l')
+plot(hrf, type = 'l', main="Predicted BOLD Response Type")
 
 # In order to create the design matrix needed in the GLM analysis we can type:
 X = fmri.design(hrf)
@@ -37,7 +37,7 @@ X = fmri.design(hrf)
 # By default the design matrix will include polynomial drift terms up to quadratic order. Thus the resulting design matrix will
 # have dimensions 96x4. Use the command image(X) to further explore the structure of the design matrix.
 
-# image(X)
+image(X, main="Design Matrix \n (dim. of 96x4)")
 
 # If we had multiple stimuli we would need to create separate predicted BOLD responses for each stimuli based on their onsets 
 # and durations (e.g., hrf1, hrf2, etc.), and create a design matrix using the commands cbind() and fmri.design() together (e.g.
@@ -48,14 +48,15 @@ X = fmri.design(hrf)
 M = read.table("fM00223/motion.txt")
 
 X2 = fmri.design(cbind(hrf, M))
-# image(X2)
+
+image(X2, main="Design Matrix incl. Motion Parameters")
 
 # The first command reads in the motion parameters and the second creates a design matrix where the first column is the 
 # predicted BOLD response (hrf), columns 2-7 are the motion parameters (M), and 8-10 are the polynomial drift terms. Hence, 
 # X2 is now a 96x10 matrix. To study the estimated motion parameters type:
 par(mfrow = (c(1, 2)))
-matplot(M[, 1:3], type = 'l')
-matplot(M[, 4:6], type = 'l')
+matplot(M[, 1:3], type = 'l', main = "Translation Parameters")
+matplot(M[, 4:6], type = 'l', main = "Rotation Parameters")
 
 # This plots the translation and rotation parameters in separate plots.
 
@@ -65,7 +66,7 @@ matplot(M[, 4:6], type = 'l')
 
 spm = fmri.lm(data, X2)
 
-## Below were just running information
+## Below information came from my RStudio console
 # fmri.lm: entering function
 # fmri.lm: calculating AR(1) model
 # 0% . 10% . 20% . 30% . 40% . 50% . 60% . 70% . 80% . 90% . 
@@ -81,7 +82,21 @@ spm = fmri.lm(data, X2)
 #     Local smoothness characterized by large bandwidth  4  check residuals for structure,Local smoothness characterized by 
 #     large bandwidth  4  check residuals for structure,Local smoothness characterized by large bandwidth  4  check residuals 
 #     for structure
-## Above were just running information
+## Above information came from my RStudio console
+
+summary(spm)
+# Object of class fmrispm created by
+# fmri.lm(data, X2)
+# Data Dimension               : 79 95 68 96 
+# Range of estimated parameters: -823.8255 ... 956.123 
+# File(s)                      : ./fM00223/swrfM00223_004.img..../fM00223/swrfM00223_099.img 
+# 
+# Design Dimension             : 96 10 
+# Prewhitening performed with smoothed map
+# of autocorrelation parameter in AR(1) model for time series!
+
+class(spm)
+# "fmridata" "fmrispm" 
 
 ######## U don't need to run below chunk of code here ######### 
 
@@ -111,13 +126,30 @@ spm3 = fmri.lm(data, X, contrast = c(1,-1))
 # following command:
 T = spm$cbeta/sqrt(spm$var)
 
+#how to view beta???
+beta <- spm$beta
+class(beta)
+# "array"
+dim(beta)
+# 79 95 68 10
+
+summary(T)
+#    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# -4.8230 -0.4413  0.2744  0.3610  1.0290 18.8500 
+
 # We can visualize the t-map corresponding to a particular slice (e.g., slice 30) using the command:
-par(mfrow = (c(1, 3)))
-image(T[, , 30], main = "Slice 30")
-image(T[, , 40], main = "Slice 40")
-image(T[, , 50], main = "Slice 50")
+dev.off() # reset the plot Or
+# par(mfrow = (c(1, 1)))
+
+image(T[, , 30], main = "T-map w.r.t. Slice 30")
 
 par(mfrow = (c(1, 2)))
-image(X, main="design matrix")
-image(X2, main="design matrix includes\n motion parameters")
+image(T[, , 30], main = "T-map w.r.t.\n Slice 30")
+image(T[, , 40], main = "T-map w.r.t.\n Slice 40")
+
+
+par(mfrow = (c(1, 2)))
+image(X, main="Design Matrix")
+image(X2, main="Design Matrix incl.\n Motion Parameters")
+
 

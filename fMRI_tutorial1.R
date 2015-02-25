@@ -1,5 +1,5 @@
 
-# fMRI Tutorial 1
+# fMRI Tutorial 1 -- fMRI Data Structure
 
 getwd()
 setwd("D:/Coursera_R/fRMI/MoAEpilot")
@@ -24,7 +24,7 @@ dim(img)
 
 # The structural image is now contained in the variable entitled img. Its dimensions are 256x256x54. We can visualize the
 # image using the R-function image. For example, if we want to study slice number 30:
-image(img[, , 30, 1], axes=FALSE)
+image(img[, , 30, 1], axes=FALSE, main="Slice #.30")
 
 # Turn to the functional data consisting of 96 files (one for each time point), contained in the subdirectory 'fM00223'.
 # Read in the data from a single time point
@@ -39,7 +39,7 @@ dim(fimg)
 # The structural image is now contained in the variable entitled fimg. Its dimensions are 64x64x64. Note these dimensions are
 # not the same as the structural scan which has a higher spatial resolution. We can again visualize the image using the 
 # R-function image. For example, if we want to study slice number 40:
-image(img[, , 40, 1], axes=FALSE)
+image(img[, , 40, 1], axes=FALSE, main="Slice #.40")
 
 # Typically, we want to work on data from all time points in the experiment. Therefore, let us now read in all the functional
 # data for a certain slice.
@@ -65,10 +65,10 @@ for (t in 1: length(files)) {
 }
 
 # Now the variable data consists of the 40th slice sampled at each of the 96 time points. To look at the slice at time 30:
-image(data[, , 30])
+image(data[, , 30], main="Slice #.40 at Time 30")
 
 # To study the time series from a specific voxel (say the one at x=20 and y=20) type:
-plot(data[20, 20, ], type='l')
+plot(data[20, 20, ], type='l', main="Time Series at Specific Voxel \n (x=20, y=20)", col="blue")
 
 
 
